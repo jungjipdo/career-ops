@@ -1,6 +1,11 @@
-# Personal data (user fills these)
+# Personal data (user fills these) — NEVER commit these
+cv.md
+article-digest.md
+config/profile.yml
 data/applications.md
 data/pipeline.md
+data/scan-history.tsv
+data/scan-report*.md
 data/scan-history.tsv
 reports/*.md
 !reports/.gitkeep
@@ -11,6 +16,7 @@ batch/logs/*
 batch/batch-state.tsv
 batch/batch-input.tsv
 batch/tracker-additions/*.tsv
+batch/tracker-additions/merged/*.tsv
 !batch/tracker-additions/.gitkeep
 jds/*
 !jds/.gitkeep
