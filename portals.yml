@@ -94,8 +94,8 @@ title_filter:
     - "Researcher"
   negative:
     # [CUSTOMIZE] Add keywords for roles you want to exclude
-    - "Junior"
     - "Intern"
+    - "인턴"
     - ".NET"
     - "Java "
     - "iOS"
@@ -106,9 +106,6 @@ title_filter:
     - "Firmware"
     - "FPGA"
     - "ASIC"
-    - "Blockchain"
-    - "Web3"
-    - "Crypto"
     - "Salesforce Admin"
     - "SAP "
     - "Oracle EBS"
@@ -122,12 +119,91 @@ title_filter:
     - "Lead"
     - "Head"
     - "Director"
+# ── Korean Job Portals (Level 1.5 — Playwright keyword search) ──────
+# Unlike tracked_companies (which scan individual company pages),
+# these are job aggregators that use keyword-based search.
+# Scanned by navigating to search_url with each keyword.
+
+kr_job_portals:
+  - name: 원티드 (Wanted)
+    base_url: https://www.wanted.co.kr
+    search_url: "https://www.wanted.co.kr/search?query={keyword}&tab=position"
+    keywords:
+      - "블록체인 보안"
+      - "Web3 엔지니어"
+      - "스마트 컨트랙트"
+      - "Smart Contract Auditor"
+      - "Blockchain Security"
+    selectors:
+      card: 'a[href^="/wd/"]'
+      title: "strong"
+      company: "span"
+    scroll_mode: infinite
+    max_scrolls: 3
+    url_pattern: "https://www.wanted.co.kr{href}"
+    enabled: true
+
+  - name: 점핏 (Jumpit)
+    base_url: https://www.jumpit.co.kr
+    search_url: "https://www.jumpit.co.kr/positions?keyword={keyword}"
+    keywords:
+      - "블록체인"
+      - "Web3"
+      - "보안 엔지니어"
+      - "스마트 컨트랙트"
+    selectors:
+      card: 'a[href^="/position/"]'
+      title: "h2"
+      company: "div > span"
+    scroll_mode: infinite
+    max_scrolls: 3
+    url_pattern: "https://www.jumpit.co.kr{href}"
+    enabled: true
+
+  - name: 로켓펀치 (RocketPunch)
+    base_url: https://www.rocketpunch.com
+    search_url: "https://www.rocketpunch.com/jobs?keywords={keyword}"
+    keywords:
+      - "블록체인 보안"
+      - "Web3 엔지니어"
+    scroll_mode: pagination
+    max_pages: 3
+    enabled: true
 
 # -- Search queries --
 # Each query triggers a WebSearch. Use site: to filter by portal.
 # The scanner extracts title, URL, and company from results.
 
 search_queries:
+  # ── Korean Market (Blockchain / Security / Backend) ──────────────────
+
+  - name: Wanted — 블록체인 보안
+    query: 'site:wanted.co.kr "블록체인" OR "스마트 컨트랙트" OR "Web3" "보안" OR "Security" "엔지니어" OR "개발자"'
+    enabled: true
+
+  - name: Wanted — Blockchain Engineer
+    query: 'site:wanted.co.kr "Blockchain Engineer" OR "Smart Contract" OR "Solidity" OR "Web3 Developer"'
+    enabled: true
+
+  - name: Wanted — 보안 엔지니어 (금융/핀테크)
+    query: 'site:wanted.co.kr "보안 엔지니어" OR "Security Engineer" 블록체인 OR 핀테크 OR 가상자산 OR 거래소'
+    enabled: true
+
+  - name: Wanted — 백엔드 (블록체인)
+    query: 'site:wanted.co.kr "백엔드 엔지니어" OR "Backend Engineer" 블록체인 OR Web3 OR 가상자산'
+    enabled: true
+
+  - name: Jumpit — 블록체인/보안
+    query: 'site:jumpit.co.kr "블록체인" OR "Web3" OR "스마트 컨트랙트" OR "보안 엔지니어"'
+    enabled: true
+
+  - name: Programmers — 블록체인/보안
+    query: 'site:career.programmers.co.kr "블록체인" OR "Blockchain" OR "Smart Contract" OR "보안 엔지니어"'
+    enabled: false   # 2025.05 서비스 종료
+
+  - name: Jobplanet — 블록체인/보안 채용
+    query: 'site:jobplanet.co.kr "블록체인 개발자" OR "Web3 엔지니어" OR "보안 엔지니어" 채용'
+    enabled: true
   # -- Ashby --
   - name: Ashby — AI PM
     query: 'site:jobs.ashbyhq.com "AI Product Manager" OR "Senior Product Manager AI" remote'
@@ -220,6 +296,113 @@ search_queries:
 # For Greenhouse companies, add api: field for faster structured JSON access.
 
 tracked_companies:
+
+  # ── Korean Blockchain / Crypto / Web3 ────────────────────────────────
+
+  - name: 두나무 (Dunamu / Upbit)
+    careers_url: https://www.wanted.co.kr/company/81
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "두나무" OR "업비트" "블록체인" OR "보안" OR "백엔드" OR "Lambda256"'
+    notes: "업비트 운영사. Lambda256(블록체인 인프라) 포함. 국내 최대 거래소."
+    enabled: true
+
+  - name: 빗썸 (Bithumb)
+    careers_url: https://www.wanted.co.kr/company/1016
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "빗썸" "블록체인" OR "보안" OR "엔지니어"'
+    notes: "대한민국 대표 가상자산거래소. Wallet Security, 스마트컨트랙트 감사 역할 있음."
+    enabled: true
+
+  - name: 코빗 (Korbit)
+    careers_url: https://www.wanted.co.kr/company/1089
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "코빗" "엔지니어" OR "개발자"'
+    notes: "국내 최초 가상화폐 거래소."
+    enabled: true
+
+  - name: 코인원 (Coinone)
+    careers_url: https://coinone.co.kr/careers
+    scan_method: websearch
+    scan_query: '"코인원" 채용 "블록체인" OR "보안" OR "개발자" site:wanted.co.kr OR site:jumpit.co.kr'
+    notes: "국내 주요 가상화폐 거래소."
+    enabled: true
+
+  - name: 해시드 (Hashed)
+    careers_url: https://www.wanted.co.kr/company/18175
+    scan_method: websearch
+    scan_query: '"해시드" 채용 "블록체인" OR "Web3" "개발자" OR "엔지니어" site:wanted.co.kr'
+    notes: "국내 대표 Web3 VC. 포트폴리오사 포지션 포함."
+    enabled: true
+
+  - name: 카카오페이증권 / Ground X (Klaytn)
+    careers_url: https://www.wanted.co.kr/company/885
+    scan_method: websearch
+    scan_query: '"ground x" OR "클레이튼" OR "klaytn" 채용 블록체인 엔지니어 site:wanted.co.kr'
+    notes: "카카오 블록체인 계열. Klaytn L1 운영."
+    enabled: true
+
+  - name: Ozys
+    careers_url: https://www.wanted.co.kr/company/14097
+    scan_method: websearch
+    scan_query: '"ozys" 채용 "블록체인" OR "스마트 컨트랙트" OR "보안" site:wanted.co.kr'
+    notes: "KLAYswap, Belt Finance 등 DeFi 프로토콜 운영."
+    enabled: true
+
+  - name: 온더 (Onther)
+    careers_url: https://www.wanted.co.kr/company/5694
+    scan_method: websearch
+    scan_query: '"온더" OR "onther" 채용 블록체인 엔지니어 site:wanted.co.kr'
+    notes: "이더리움 L2 (Tokamak Network) 빌더. 스마트컨트랙트 감사."
+    enabled: true
+
+  - name: Haechi Labs (해치랩스)
+    careers_url: https://haechi.io/careers
+    scan_method: websearch
+    scan_query: '"haechi" OR "해치랩스" 채용 "스마트 컨트랙트" OR "블록체인 보안" OR "감사" site:wanted.co.kr OR site:jumpit.co.kr'
+    notes: "스마트컨트랙트 감사 전문. AUDIT+. Korean Web3 security leader."
+    enabled: true
+
+  - name: 위메이드 (Wemade / WEMIX)
+    careers_url: https://www.wanted.co.kr/company/1961
+    scan_method: websearch
+    scan_query: '"위메이드" OR "wemix" 채용 "블록체인" OR "스마트 컨트랙트" OR "보안" site:wanted.co.kr'
+    notes: "WEMIX 블록체인 게임 플랫폼. 게임파이/NFT 개발."
+    enabled: true
+
+  - name: 쟁글 (Xangle)
+    careers_url: https://www.wanted.co.kr/company/14456
+    scan_method: websearch
+    scan_query: '"쟁글" OR "xangle" 채용 블록체인 엔지니어 site:wanted.co.kr'
+    notes: "크립토 데이터/리서치 플랫폼."
+    enabled: true
+
+  - name: 슈퍼블록 (Superblock)
+    careers_url: https://www.wanted.co.kr/company/19047
+    scan_method: websearch
+    scan_query: '"슈퍼블록" 채용 블록체인 엔지니어 site:wanted.co.kr'
+    notes: "블록체인 서비스 개발. DefiSquare 등."
+    enabled: true
+
+  - name: 티오리 (Theori)
+    careers_url: https://theori.io/careers
+    scan_method: websearch
+    scan_query: '"theori" OR "티오리" 채용 보안 엔지니어 "취약점" site:wanted.co.kr OR site:theori.io'
+    notes: "Upside Academy 주관사. 사이버보안 전문 (Web3 보안 포함). 중요."
+    enabled: true
+
+  - name: Uppsala Security
+    careers_url: https://uppsalasecurity.com/careers
+    scan_method: websearch
+    scan_query: '"Uppsala Security" careers engineer blockchain security'
+    notes: "싱가포르/서울. 블록체인 AML/보안 분석 전문. 직접 인연 있음."
+    enabled: true
+
+  - name: Blockchain Valley (블록체인밸리)
+    careers_url: https://www.wanted.co.kr/company/18731
+    scan_method: websearch
+    scan_query: '"블록체인밸리" 채용 site:wanted.co.kr'
+    notes: "현재 재직 중. 내부 오픈 포지션 모니터링용."
+    enabled: true
 
   # -- AI Labs & LLM providers --
 
