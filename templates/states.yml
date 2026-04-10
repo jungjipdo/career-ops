@@ -54,3 +54,38 @@ states:
     aliases: [no_aplicar, no aplicar, skip, monitor]
     description: Doesn't fit, don't apply
     dashboard_group: skip
+
+  # -- 한국 시장 확장 상태 (KR-specific action-based states) --
+  # 기존 상태와 호환되며, 보다 행동 지향적인 라벨을 제공합니다.
+  # career-ops는 절대 자동으로 지원서를 제출하지 않습니다.
+
+  - id: screened
+    label: Screened
+    aliases: [스크리닝, 스크리닝완료, quick_screen]
+    description: Quick Screen(A+B블록)만 완료. Deep Dive 대기.
+    dashboard_group: evaluated
+
+  - id: apply_now
+    label: Apply Now
+    aliases: [즉시지원, 즉시_지원, apply_now]
+    description: Score 3.5+, Deep Dive 완료, 지원 가치 있음. 사용자가 직접 제출.
+    dashboard_group: evaluated
+
+  - id: network_first
+    label: Network First
+    aliases: [네트워킹먼저, 네트워킹_먼저, network_first]
+    description: 좋은 기회지만 먼저 커피챗/LinkedIn 접촉 권장.
+    dashboard_group: evaluated
+
+  - id: build_proof
+    label: Build Proof
+    aliases: [증빙보강, 증빙_보강, build_proof]
+    description: 갭이 있어 포트폴리오/경험 보완 후 재도전.
+    dashboard_group: evaluated
+
+  - id: watch
+    label: Watch
+    aliases: [시장관찰, 시장_관찰, watching]
+    description: 관심있지만 지금은 아님. 나중에 재확인.
+    dashboard_group: skip
+
