@@ -43,10 +43,55 @@ Los `search_queries` con `site:` filters cubren portales de forma transversal (t
 
 **Prioridad de ejecución:**
 1. Nivel 1: Playwright → todas las `tracked_companies` con `careers_url`
-2. Nivel 2: API → todas las `tracked_companies` con `api:`
-3. Nivel 3: WebSearch → todos los `search_queries` con `enabled: true`
+2. **Nivel 1.5: Korean job portals** → Playwright keyword search en portales coreanos
+3. Nivel 2: API → todas las `tracked_companies` con `api:`
+4. Nivel 3: WebSearch → todos los `search_queries` con `enabled: true`
 
 Los niveles son aditivos — se ejecutan todos, los resultados se mezclan y deduplicar.
+
+### Nivel 1.5 — Korean Job Portal Playwright Scan (한국 채용 사이트 직접 스캔)
+
+Los portales de empleo coreanos (Wanted, Jumpit, RocketPunch) NO son páginas de carreras de empresas, sino agregadores con búsqueda por keyword. Se escanean con Playwright navegando a su URL de búsqueda.
+
+Leer `portals.yml → kr_job_portals` para la configuración:
+
+#### Wanted (원티드)
+- URL: `https://www.wanted.co.kr/search?query={keyword}&tab=position`
+- **Extraer de la snapshot:**
+  - Links que empiecen con `/wd/` → URLs de ofertas
+  - Para cada link: título (texto del link o `strong`), empresa (texto adjunto)
+  - Si visible, experiencia requerida (p.ej. "경력 2-5년", "신입·경력")
+- **Scroll**: infinite scroll. Hacer 2-3 scrolls (`browser_scroll` down), esperar 1-2s entre scrolls. Parar si no aparecen nuevos items.
+- **Output**: `https://www.wanted.co.kr/wd/{id}`
+- **Keywords**: los definidos en `kr_job_portals[name=원티드].keywords`
+
+#### Jumpit (점핏)
+- URL: `https://www.jumpit.co.kr/positions?keyword={keyword}`
+- **Extraer de la snapshot:**
+  - Links que empiecen con `/position/` → URLs de ofertas
+  - Para cada link: título, empresa, y experiencia si disponibles
+- **Scroll**: infinite scroll. 2-3 scrolls.
+- **Output**: `https://www.jumpit.co.kr/position/{id}`
+- **Keywords**: los definidos en `kr_job_portals[name=점핏].keywords`
+
+#### RocketPunch (로켓펀치)
+- URL: `https://www.rocketpunch.com/jobs?keywords={keyword}`
+- **Extraer de la snapshot:**
+  - Job cards con título y empresa
+  - Links a páginas individuales de ofertas
+- **Pagination**: Hacer click en "다음" o siguiente si existe. Max 3 páginas.
+- **Output**: full rocketpunch URL
+
+#### Ejecución:
+1. Para cada portal en `kr_job_portals` con `enabled: true`:
+   a. Para cada keyword en su `keywords` list:
+      - Navegar a `search_url` con el keyword sustituido
+      - Snapshot + scroll para obtener más resultados
+      - Extraer {title, url, company, experience_text} para cada listing
+   b. Dedup intra-portal (misma URL de distintos keywords)
+2. Aplicar el filtro de 3 etapas (Stage A/B/C) del paso 6
+3. Dedup contra scan-history.tsv + pipeline.md + applications.md
+4. Añadir nuevos al pipeline.md
 
 ## Workflow
 
@@ -79,10 +124,27 @@ Los niveles son aditivos — se ejecutan todos, los resultados se mezclan y dedu
       - **company**: después del " @ " en el título, o extraer del dominio/path
    c. Acumular en lista de candidatos (dedup con Nivel 1+2)
 
-6. **Filtrar por título** usando `title_filter` de `portals.yml`:
-   - Al menos 1 keyword de `positive` debe aparecer en el título (case-insensitive)
+6. **Filtrar por título** — 3-stage smart filter:
+
+   **Stage A: Title keyword filter** (portals.yml `title_filter`):
+   - Al menos 1 keyword de `positive` debe aparecer en el título (case-insensitive substring match)
    - 0 keywords de `negative` deben aparecer
    - `seniority_boost` keywords dan prioridad pero no son obligatorios
+   - ⚠️ **CRITICAL: En esta etapa usar SOLO los keywords de title_filter. NO hacer juicio propio sobre si el candidato encaja. NO skippear por nivel de experiencia percibido, seniority, o stack inferido.**
+
+   **Stage B: Experience requirement filter** (title-based parsing):
+   - Si el título contiene patrones de experiencia, extraer el número:
+     - `"(N년 이상)"`, `"(경력 N-M년)"`, `"(N+ years)"`, `"(N+years exp)"` → extraer N
+     - `"(7년 이상)"` → 7, `"(경력 2-5년)"` → 2 (usar el mínimo)
+   - Comparar con `config/profile.yml → candidate.max_yoe_filter`
+   - Si requisito ≤ max_yoe_filter → PASS
+   - Si requisito > max_yoe_filter → registrar como `skipped_experience`
+   - Sin mención de experiencia en título → PASS (asumimos "경력무관" o "협의")
+
+   **Stage C: Seniority gate** (conservative):
+   - Títulos con "Staff", "Principal", "Director", "VP", "CTO", "Head of" → `skipped_seniority`
+   - Títulos con "Senior", "Lead", "시니어", "수석", "팀장" → PASS (evaluación posterior decide)
+   - Todo lo demás → PASS
 
 7. **Deduplicar** contra 3 fuentes:
    - `scan-history.tsv` → URL exacta ya vista
