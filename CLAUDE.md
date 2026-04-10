@@ -103,10 +103,19 @@ If `cv.md` is missing, ask:
 > 1. Paste your CV here and I'll convert it to markdown
 > 2. Paste your LinkedIn URL and I'll extract the key info
 > 3. Tell me about your experience and I'll draft a CV for you
+> 4. **Give me your resume PDF** and I'll parse it with markitdown → `cv.md` + `profile.yml` auto-fill
 >
 > Which do you prefer?"
 
-Create `cv.md` from whatever they provide. Make it clean markdown with standard sections (Summary, Experience, Projects, Education, Skills).
+**If option 4 (PDF):** Run the onboarding mode (`modes/kr/onboarding.md`):
+1. `.venv/bin/python3 scripts/pdf-to-md.py {path} -o /tmp/resume-raw.md --type resume`
+2. Read the raw markdown output
+3. Generate `cv.md` with clean structure and `config/profile.yml` with extracted info
+4. If user also has a **portfolio PDF**, process separately:
+   `.venv/bin/python3 scripts/pdf-to-md.py {path} -o /tmp/portfolio-raw.md --type portfolio`
+   → Generate `article-digest.md` with structured proof points
+
+Otherwise, create `cv.md` from whatever they provide. Make it clean markdown with standard sections (Summary, Experience, Projects, Education, Skills).
 
 #### Step 2: Profile (required)
 If `config/profile.yml` is missing, copy from `config/profile.example.yml` and then ask:
