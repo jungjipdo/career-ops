@@ -1,6 +1,13 @@
 # User Profile Context -- career-ops
 
 <!-- ============================================================
+     🇰🇷 OUTPUT LANGUAGE OVERRIDE
+     모든 평가 리포트, 트래커 Notes, 스캔 요약은 **한국어**로 작성한다.
+     글로벌 공고(영어 JD)도 분석은 한국어로 작성한다.
+     단, ATS Keywords (F 블록 하단)와 Cover letter opener는 영어 유지.
+     ============================================================ -->
+
+<!-- ============================================================
      THIS FILE IS YOURS. It will NEVER be auto-updated.
      
      Customize everything here: your archetypes, narrative,
