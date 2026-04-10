@@ -3,7 +3,7 @@ name: career-ops
 description: AI job search command center -- evaluate offers, generate CVs, scan portals, track applications
 user_invocable: true
 args: mode
-argument-hint: "[scan | deep | pdf | oferta | ofertas | apply | batch | tracker | pipeline | contacto | training | project | interview-prep | update]"
+argument-hint: "[scan | deep | pdf | oferta | ofertas | apply | batch | tracker | pipeline | contacto | training | project | interview-prep | onboarding | update]"
 ---
 
 # career-ops -- Router
@@ -29,6 +29,7 @@ Determine the mode from `{{mode}}`:
 | `scan` | `scan` |
 | `batch` | `batch` |
 | `patterns` | `patterns` |
+| `onboarding` | `onboarding` (PDF 이력서/포트폴리오로 초기 설정) |
 
 **Auto-pipeline detection:** If `{{mode}}` is not a known sub-command AND contains JD text (keywords: "responsibilities", "requirements", "qualifications", "about the role", "we're looking for", company name + role) or a URL to a JD, execute `auto-pipeline`.
 
@@ -57,7 +58,8 @@ Available commands:
   /career-ops apply     → Live application assistant (reads form + generates answers)
   /career-ops scan      → Scan portals and discover new offers
   /career-ops batch     → Batch processing with parallel workers
-  /career-ops patterns  → Analyze rejection patterns and improve targeting
+  /career-ops patterns    → Analyze rejection patterns and improve targeting
+  /career-ops onboarding  → PDF 이력서/포트폴리오로 cv.md + profile.yml 자동 생성 🇰🇷
 
 Inbox: add URLs to data/pipeline.md → /career-ops pipeline
 Or paste a JD directly to run the full pipeline.
@@ -78,6 +80,11 @@ Applies to: `auto-pipeline`, `oferta`, `ofertas`, `pdf`, `contacto`, `apply`, `p
 Read `modes/{mode}.md`
 
 Applies to: `tracker`, `deep`, `training`, `project`, `patterns`
+
+### Korean extension modes:
+Read `modes/kr/{mode}.md`
+
+Applies to: `onboarding`
 
 ### Modes delegated to subagent:
 For `scan`, `apply` (with Playwright), and `pipeline` (3+ URLs): launch as Agent with the content of `_shared.md` + `modes/{mode}.md` injected into the subagent prompt.
