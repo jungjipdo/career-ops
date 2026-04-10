@@ -145,16 +145,17 @@ kr_job_portals:
 
   - name: 점핏 (Jumpit)
     base_url: https://www.jumpit.co.kr
-    search_url: "https://www.jumpit.co.kr/positions?keyword={keyword}"
+    search_url: "https://www.jumpit.co.kr/search?query={keyword}"
     keywords:
       - "블록체인"
       - "Web3"
       - "보안 엔지니어"
       - "스마트 컨트랙트"
+      - "블록체인 보안"
     selectors:
       card: 'a[href^="/position/"]'
       title: "h2"
-      company: "div > span"
+      company: "div:first-child > div"  # content_div 내 첫 번째 요소 = 회사명
     scroll_mode: infinite
     max_scrolls: 3
     url_pattern: "https://www.jumpit.co.kr{href}"
@@ -402,6 +403,74 @@ tracked_companies:
     scan_method: websearch
     scan_query: '"블록체인밸리" 채용 site:wanted.co.kr'
     notes: "현재 재직 중. 내부 오픈 포지션 모니터링용."
+    enabled: true
+
+  # -- 추가 한국 블록체인/보안 기업 --
+
+  - name: 안랩블록체인컴퍼니 (AhnLab BC)
+    careers_url: https://www.wanted.co.kr/company/14281
+    scan_method: websearch
+    scan_query: '"안랩블록체인" 채용 site:wanted.co.kr'
+    enabled: true
+
+  - name: 라인넥스트 (LINE NEXT / Finschia)
+    careers_url: https://careers.linecorp.com/ko/jobs?ca=Blockchain
+    scan_method: playwright
+    notes: "LINE 블록체인 사업부. Kaia(구 Klaytn+Finschia) 생태계."
+    enabled: true
+
+  - name: 크로스앵글 (Xangle / CrossAngle)
+    careers_url: https://www.wanted.co.kr/company/12370
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "크로스앵글" OR "쟁글"'
+    enabled: true
+
+  - name: 오아시스 (OASIS)
+    careers_url: https://www.wanted.co.kr/company/22095
+    scan_method: websearch  
+    scan_query: 'site:wanted.co.kr "오아시스" 블록체인'
+    notes: "메타버스+NFT 서비스. Web3 백엔드 공고 주기적 게재."
+    enabled: true
+
+  - name: 보라네트워크 (BORA / Kakao Games)
+    careers_url: https://www.wanted.co.kr/company/20236
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "보라" 블록체인'
+    enabled: true
+
+  - name: NHN KCP (결제/보안)
+    careers_url: https://www.wanted.co.kr/company/2082
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "NHN" "보안" OR "거래소" OR "블록체인"'
+    notes: "핀테크/결제 보안. IT Security 공고 간헐적."
+    enabled: true
+
+  - name: 펜타시큐리티 (Penta Security)
+    careers_url: https://www.wanted.co.kr/company/8610
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "펜타시큐리티"'
+    notes: "웹보안/암호화폐 지갑(PALLET). 보안 엔지니어 채용."
+    enabled: true
+
+  - name: S2W (에스투더블유)
+    careers_url: https://www.wanted.co.kr/company/19478
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "S2W" 보안'
+    notes: "다크웹/블록체인 인텔리전스. KAIST 스핀오프."
+    enabled: true
+
+  - name: 체인파트너스 (Chain Partners)
+    careers_url: https://www.wanted.co.kr/company/15093
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "체인파트너스"'
+    notes: "블록체인 금융 인프라."
+    enabled: true
+
+  - name: 람다256 (Lambda256 / Luniverse)
+    careers_url: https://www.wanted.co.kr/company/11654
+    scan_method: websearch
+    scan_query: 'site:wanted.co.kr "람다256" OR "루니버스"'
+    notes: "두나무 자회사, Luniverse BaaS."
     enabled: true
 
   # -- AI Labs & LLM providers --

@@ -55,3 +55,32 @@ Antes de procesar cualquier URL, verificar sync:
 node cv-sync-check.mjs
 ```
 Si hay desincronización, advertir al usuario antes de continuar.
+
+## Pre-evaluation Liveness Check (선택적)
+
+평가 시작 전 Pending URL의 활성 여부를 먼저 확인하면 만료 공고 평가 시간을 절약할 수 있다.
+사용자에게 안내:
+
+```
+💡 파이프라인에 {N}개 공고가 대기 중입니다.
+평가 전 URL 활성 여부를 먼저 확인할까요? (npm run liveness로 체크)
+```
+
+사용자가 동의하면:
+```bash
+npm run liveness -- {url1} {url2} ...
+```
+※ 만료/불확실 URL은 pipeline.md에서 `- [!] ... (expired)` 로 변경하고 스킵.
+
+## Post-pipeline Cleanup (평가 완료 후 자동)
+
+모든 Pending 처리 완료 후, 다음을 순서대로 실행:
+
+1. `npm run dedup` — 중복 트래커 제거
+2. `npm run verify` — 파이프라인 무결성 검증
+
+결과 테이블 표시 후:
+```
+✅ 파이프라인 처리 완료. {N}개 평가, {M}개 Score 4.0+ (Priority Lane 대상).
+Score 4.0+ 공고에 대해 /career-ops pdf 로 이력서 생성을 진행할까요?
+```
