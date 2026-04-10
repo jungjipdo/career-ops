@@ -1,4 +1,4 @@
-# Personal data (user fills these) — NEVER commit these
+# ── 개인 데이터 (절대 커밋 금지) ──────────────────────────
 cv.md
 article-digest.md
 config/profile.yml
@@ -6,7 +6,7 @@ data/applications.md
 data/pipeline.md
 data/scan-history.tsv
 data/scan-report*.md
-data/scan-history.tsv
+data/*.bak
 reports/*.md
 !reports/.gitkeep
 output/*
@@ -21,31 +21,29 @@ batch/tracker-additions/merged/*.tsv
 jds/*
 !jds/.gitkeep
 
-# User config and customization (never auto-updated)
-config/profile.yml
+# ── 사용자 설정 (auto-update 제외) ────────────────────────
 portals.yml
 modes/_profile.md
 .update-dismissed
 .update-lock
 
-# Generated
+# ── Generated ─────────────────────────────────────────────
 .resolved-prompt-*
 node_modules/
 
-# OS
+# ── OS ────────────────────────────────────────────────────
 .DS_Store
 *.mov
 *.mp4
 
-# Claude Code local
+# ── Claude Code local ─────────────────────────────────────
 .claude/settings.local.json
 .claude/memory/
 career-dashboard
 package-lock.json
 
-# Python (markitdown)
+# ── Python (markitdown) ───────────────────────────────────
 .venv/
 markitdown/
 __pycache__/
 *.pyc
-

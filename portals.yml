@@ -205,6 +205,15 @@ search_queries:
   - name: Jobplanet — 블록체인/보안 채용
     query: 'site:jobplanet.co.kr "블록체인 개발자" OR "Web3 엔지니어" OR "보안 엔지니어" 채용'
     enabled: true
+
+  - name: Indeed KR — 블록체인/보안
+    query: 'site:kr.indeed.com "블록체인" OR "Blockchain" OR "Smart Contract" OR "보안 엔지니어"'
+    enabled: true
+
+  - name: Indeed KR — Web3 Developer
+    query: 'site:kr.indeed.com "Web3" OR "Solidity" OR "DeFi" "엔지니어" OR "개발자"'
+    enabled: true
+
   # -- Ashby --
   - name: Ashby — AI PM
     query: 'site:jobs.ashbyhq.com "AI Product Manager" OR "Senior Product Manager AI" remote'
