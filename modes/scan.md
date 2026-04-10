@@ -151,7 +151,7 @@ Leer `portals.yml → kr_job_portals` para la configuración:
    - `applications.md` → empresa + rol normalizado ya evaluado
    - `pipeline.md` → URL exacta ya en pendientes o procesadas
 
-7.5. **Verificar liveness de resultados de WebSearch (Nivel 3)** — ANTES de añadir a pipeline:
+7.5. **Verificar liveness de resultados** — ANTES de añadir a pipeline:
 
    Los resultados de WebSearch pueden estar desactualizados (Google cachea resultados durante semanas o meses). Para evitar evaluar ofertas expiradas, verificar con Playwright cada URL nueva que provenga del Nivel 3. Los Niveles 1 y 2 son inherentemente en tiempo real y no requieren esta verificación.
 
@@ -164,6 +164,14 @@ Leer `portals.yml → kr_job_portals` para la configuración:
         - URL final contiene `?error=true` (Greenhouse redirige así cuando la oferta está cerrada)
         - Página contiene: "job no longer available" / "no longer open" / "position has been filled" / "this job has expired" / "page not found"
         - Solo navbar y footer visibles, sin contenido JD (contenido < ~300 chars)
+        - **Fecha de cierre pasada (deadline check):**
+          - Buscar en la página: "마감일", "마감", "접수 기간", "deadline", "closing date", "expires"
+          - Si existe una fecha de cierre y es **anterior a hoy - 3 meses** → `skipped_expired`
+          - Si es anterior a hoy pero dentro de 3 meses → marcar como `⚠️ deadline_warning`
+            en el pipeline.md entry: `- [ ] {url} | {company} | {title} | ⚠️ 마감일 {fecha}`
+          - Si no existe fecha de cierre explícita → tratar como activa (mayoría de portales)
+          - ⚠️ **한국 사이트 주의:** 원티드(Wanted), 점핏(Jumpit) 등에서 공고가 활성 게재 중이지만
+            실제 마감일이 이미 지난 경우가 빈번함. 반드시 마감일 필드를 체크할 것.
    d. Si expirada: registrar en `scan-history.tsv` con status `skipped_expired` y descartar
    e. Si activa: continuar al paso 8
 
