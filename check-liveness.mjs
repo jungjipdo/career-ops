@@ -48,10 +48,45 @@ const APPLY_PATTERNS = [
   /easy apply/i,
   /start application/i,  // Ashby
   /ich bewerbe mich/i,   // German Greenhouse
+  /지원하기/,             // Korean: Wanted, Jumpit
+  /입사지원/,             // Korean: Saramin
+  /즉시지원/,             // Korean: immediate apply
 ];
 
 // Below this length the page is probably just nav/footer (closed ATS page)
 const MIN_CONTENT_CHARS = 300;
+
+// Deadline parsing patterns (한국어 + 영어)
+const DEADLINE_PATTERNS = [
+  /마감일?\s*[:：]?\s*(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/,
+  /마감\s*[:：]?\s*(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/,
+  /접수\s*기간\s*[:：]?.*?~\s*(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/,
+  /모집\s*기간\s*[:：]?.*?~\s*(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/,
+  /deadline\s*[:：]?\s*(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/i,
+  /closing\s+date\s*[:：]?\s*(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/i,
+  /expires?\s*[:：]?\s*(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/i,
+];
+
+const THREE_MONTHS_MS = 90 * 24 * 60 * 60 * 1000;
+
+function checkDeadline(bodyText) {
+  for (const pattern of DEADLINE_PATTERNS) {
+    const match = bodyText.match(pattern);
+    if (match) {
+      const [, year, month, day] = match;
+      const deadline = new Date(Number(year), Number(month) - 1, Number(day));
+      const now = new Date();
+      const diff = now - deadline;
+      if (diff > THREE_MONTHS_MS) {
+        return { status: 'expired', date: `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}` };
+      } else if (diff > 0) {
+        return { status: 'warning', date: `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}` };
+      }
+      return { status: 'active', date: `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}` };
+    }
+  }
+  return { status: 'none', date: null };
+}
 
 async function checkUrl(page, url) {
   try {
@@ -75,10 +110,19 @@ async function checkUrl(page, url) {
 
     const bodyText = await page.evaluate(() => document.body?.innerText ?? '');
 
+    // Check deadline FIRST — a page can look active but have a past deadline
+    const deadlineCheck = checkDeadline(bodyText);
+    if (deadlineCheck.status === 'expired') {
+      return { result: 'expired', reason: `deadline passed: ${deadlineCheck.date} (3개월+ 경과)` };
+    }
+
     // Apply button is the strongest positive signal — check it first.
     // This short-circuits before expired patterns that can appear on active pages
     // (e.g. Workday's split-view layout shows "N JOBS FOUND" even on active job pages).
     if (APPLY_PATTERNS.some(p => p.test(bodyText))) {
+      if (deadlineCheck.status === 'warning') {
+        return { result: 'uncertain', reason: `apply button found but deadline passed: ${deadlineCheck.date} (⚠️ 마감일 경과)` };
+      }
       return { result: 'active', reason: 'apply button detected' };
     }
 

@@ -229,8 +229,11 @@ Nuevas añadidas a pipeline.md: N
   + {company} | {title} | {query_name}
   ...
 
-→ Ejecuta /career-ops pipeline para evaluar las nuevas ofertas.
+📋 파이프라인에 총 {M}개 공고가 대기 중입니다.
+→ /career-ops pipeline 으로 평가를 시작할까요? (Y/N)
 ```
+
+**⚠️ CRITICAL: 스캔 완료 후 pipeline을 자동 실행하지 않는다. 반드시 사용자에게 확인을 구한다.**
 
 ## Gestión de careers_url
 
